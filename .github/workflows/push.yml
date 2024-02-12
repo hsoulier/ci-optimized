@@ -1,0 +1,82 @@
+name: Push
+
+on: 
+  push:
+  
+
+
+jobs:
+  lint-build:
+    runs-on: ubuntu-latest
+    name: "Lint and build"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: "yarn"
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: install --frozen-lockfile
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: lint
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: build
+      env:
+        NEXT_PUBLIC_ENV: "ci"
+  unit-tests:
+    runs-on: ubuntu-latest
+    name: "Component tests"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: "yarn"
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: install --frozen-lockfile
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: test:unit:ci
+      env:
+        NEXT_PUBLIC_ENV: "unit"
+  component-tests:
+    runs-on: ubuntu-latest
+    name: "Component tests"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: "yarn"
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: install --frozen-lockfile
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: test:component:ci
+      env:
+        NEXT_PUBLIC_ENV: "component"
+  e2e-tests:
+    needs: 
+      - lint-build
+    runs-on: ubuntu-latest
+    name: "Component tests"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: "yarn"
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: install --frozen-lockfile
+    - uses: borales/actions-yarn@v4
+      with:
+        cmd: test:e2e:ci
+      env:
+        NEXT_PUBLIC_ENV: "e2e"
+      
