@@ -15,30 +15,59 @@ jobs:
       with:
         node-version: 20
         cache: "yarn"
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: install --frozen-lockfile
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: lint
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: build
       env:
         NEXT_PUBLIC_ENV: "ci"
   unit-tests:
     runs-on: ubuntu-latest
-    name: "Component tests"
+    name: "Unit tests"
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: "yarn"
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: install --frozen-lockfile
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
+      with:
+        cmd: test:unit:ci
+      env:
+        NEXT_PUBLIC_ENV: "unit"
+  check-deps-cache:
+    needs: 
+      - unit-tests
+    runs-on: ubuntu-latest
+    name: "Check if deps are cached"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: "yarn"
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+    - uses: actions/cache@v3
+      id: yarn-cache
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ github.sha }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: ${{ github.sha }}-yarn-
+    - uses: borales/actions-yarn@v5
+      if: steps.yarn-cache.outputs.cache-hit != 'true'
+      with:
+        cmd: install --frozen-lockfile
+    - uses: borales/actions-yarn@v5
       with:
         cmd: test:unit:ci
       env:
@@ -52,10 +81,10 @@ jobs:
       with:
         node-version: 20
         cache: "yarn"
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: install --frozen-lockfile
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: test:component:ci
       env:
@@ -64,17 +93,19 @@ jobs:
     needs: 
       - lint-build
     runs-on: ubuntu-latest
-    name: "Component tests"
+    name: "E2E tests"
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: "yarn"
-    - uses: borales/actions-yarn@v4
+    - name: "Check if deps are installed"
+      run: "ls -la | grep node_modules"
+    - uses: borales/actions-yarn@v5
       with:
         cmd: install --frozen-lockfile
-    - uses: borales/actions-yarn@v4
+    - uses: borales/actions-yarn@v5
       with:
         cmd: test:e2e:ci
       env:
