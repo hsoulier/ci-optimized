@@ -9,7 +9,7 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "text:unit": "jest",
-    "test:unit:ci": "jest --ci",
+    "test:unit:ci": "jest --ci --coverage --coverageReporters json-summary",
     "test:unit:watch": "jest --watch",
     "cypress:open": "cypress open",
     "test:component:cy": "cypress run",
