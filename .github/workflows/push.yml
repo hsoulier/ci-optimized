@@ -2,8 +2,6 @@ name: Push
 
 on: 
   push:
-  
-
 
 jobs:
   lint-build:
@@ -13,14 +11,7 @@ jobs:
     - name: 📂 Checkout
       uses: actions/checkout@v4
     - name: 🧶 Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: "yarn"
-    - name: 📦 Install dependencies
-      uses: borales/actions-yarn@v5
-      with:
-        cmd: install --frozen-lockfile
+      uses: ./.github/actions/init-node
     - name: 🚨 Linting
       uses: borales/actions-yarn@v5
       with:
@@ -38,14 +29,7 @@ jobs:
     - name: 📂 Checkout
       uses: actions/checkout@v4
     - name: 🧶 Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: "yarn"
-    - name: 📦 Install dependencies
-      uses: borales/actions-yarn@v5
-      with:
-        cmd: install --frozen-lockfile
+      uses: ./.github/actions/init-node
     - name: 🔬 Unit tests with jest
       uses: borales/actions-yarn@v5
       with:
@@ -65,14 +49,7 @@ jobs:
     - name: 📂 Checkout
       uses: actions/checkout@v4
     - name: 🧶 Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: "yarn"
-    - name: 📦 Install dependencies
-      uses: borales/actions-yarn@v5
-      with:
-        cmd: install --frozen-lockfile
+      uses: ./.github/actions/init-node
     - name: 🏞️ Component tests with Cypress
       uses: borales/actions-yarn@v5
       with:
@@ -88,14 +65,7 @@ jobs:
     - name: 📂 Checkout
       uses: actions/checkout@v4
     - name: 🧶 Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: "yarn"
-    - name: 📦 Install dependencies
-      uses: borales/actions-yarn@v5
-      with:
-        cmd: install --frozen-lockfile
+      uses: ./.github/actions/init-node
     - name: 🏞️ E2E tests with Cypress
       uses: borales/actions-yarn@v5
       with:
